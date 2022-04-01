@@ -1,5 +1,5 @@
 const settings = {
-    sellerUrl: "https://www.wildberries.ru/brands/shopshop/beysbolki",
+    sellerUrl: "https://www.wildberries.ru/seller/619632/beysbolki",
     productIteratationDelay: 3,
     productsCountPerPage: false,
     pagesHandlingCount: false, 
