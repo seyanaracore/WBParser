@@ -94,7 +94,7 @@ async function fetchProductsDataOnPage(
             });
 
          window.productData.sellerName =
-            document.querySelector(".seller-details__title")?.textContent ||
+            document.querySelector(".seller-info__name")?.textContent ||
             "none";
          return window.productData.codes.length ? window.productData : null;
       });

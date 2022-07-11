@@ -1,5 +1,5 @@
 const settings = {
-    sellerUrl: "https://www.wildberries.ru/seller/619632/beysbolki",
+    sellerUrl: "https://www.wildberries.ru/brands/goorin-bros",
     productIteratationDelay: 3,
     productsCountPerPage: false,
     pagesHandlingCount: false, 
