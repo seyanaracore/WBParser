@@ -1,19 +1,33 @@
-import { CsvWriter } from "csv-writer/src/lib/csv-writer";
+import * as csv from "fast-csv";
+import iconv from "iconv-lite";
+import fs from "fs";
+import { Transform } from "stream";
 
-CsvWriter.createWriteStream()
-const writeCsv = (path, data, del = ";") => {
-   const writableStream = fs.createWriteStream(filename);
-   const stringifier = stringify({ header: true, columns: Object.keys(data) });
+const encodeStream = new Transform({
+   transform(chunk, encoding, callback) {
+      callback(null, iconv.encode(chunk, "win1251"));
+   },
+});
 
-	for (const po)
-	.each(`select * from migration`, (error, row) => {
-		if (error) {
-		  return console.log(error.message);
-		}
-		stringifier.write(row);
-	 });
-	 stringifier.pipe(writableStream);
-	 console.log("Finished writing data");
-};
+class writeCSVStream {
+   constructor(path, del = ";") {
+      this.ws = fs.createWriteStream(path, {
+         flags: "a",
+      });
+      this.csvStream = csv.format({
+         headers: true,
+         delimiter: del,
+         includeEndRowDelimiter: true,
+      });
+      this.csvStream.pipe(encodeStream).pipe(this.ws);
+   }
+   write(data) {
+      if (Array.isArray(data)) {
+         data.forEach((el) => this.csvStream.write(el));
+      } else {
+         this.csvStream.write(data);
+      }
+   }
+}
 
-export default writeCsv;
+export default writeCSVStream;
