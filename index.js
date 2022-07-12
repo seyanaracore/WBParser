@@ -20,7 +20,7 @@ async function fetchProductsLinks(
          ".product-card-list > div.product-card"
       );
       const links = [];
-      const errorBlock = document.querySelector("#divGoodsNotFound");
+      const errorBlock = document.querySelector("#divGoodsNotFoundBackMain") || document.querySelector("#divGoodsNotFound");
       const pageError = !errorBlock?.classList?.contains("hide");
       if (pageError) {
          return null;
@@ -94,8 +94,7 @@ async function fetchProductsDataOnPage(
             });
 
          window.productData.sellerName =
-            document.querySelector(".seller-info__name")?.textContent ||
-            "none";
+            document.querySelector(".seller-info__name")?.textContent || "none";
          return window.productData.codes.length ? window.productData : null;
       });
       if (!productData) {
@@ -240,7 +239,7 @@ async function getProductsLinksList(sellerUrl, fileStream) {
 }
 
 async function retryFetchRejectedProducts(fileStream) {
-   const getRejectedLength = () => rejectedProducts.length
+   const getRejectedLength = () => rejectedProducts.length;
    if (!getRejectedLength()) return;
    console.log("\n" + "fetch rejected products links start" + "\n");
    while (getRejectedLength()) {
