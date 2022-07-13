@@ -1,32 +1,43 @@
-import * as csv from "fast-csv";
 import iconv from "iconv-lite";
 import fs from "fs";
-import { Transform } from "stream";
+import { createObjectCsvStringifier } from "csv-writer";
+import { DEFAULT_DELIMITER, DEFAULT_ENCODE } from "../constants.js";
 
-const encodeStream = new Transform({
-   transform(chunk, encoding, callback) {
-      callback(null, iconv.encode(chunk, "win1251"));
-   },
-});
+const validateHeaders = (headers) => {
+   return (
+      Array.isArray(headers) &&
+      !!headers.length &&
+      !headers.some((el) => {
+         return !(
+            typeof el === "object" &&
+            el.hasOwnProperty("id") &&
+            el.hasOwnProperty("title")
+         );
+      })
+   );
+};
 
 class writeCSVStream {
-   constructor(path, del = ";") {
+   constructor(path, headers, del = DEFAULT_DELIMITER) {
+      if (!validateHeaders(headers))
+         throw new Error("Excepting headers [{id: ''; titile: ''}]");
+
       this.ws = fs.createWriteStream(path, {
          flags: "a",
       });
-      this.csvStream = csv.format({
-         headers: true,
-         delimiter: del,
-         includeEndRowDelimiter: true,
+      this.csvStringifier = createObjectCsvStringifier({
+         header: headers,
+         fieldDelimiter: del,
       });
-      this.csvStream.pipe(encodeStream).pipe(this.ws);
+      this.ws.write(this.csvStringifier.getHeaderString());
+   }
+   static getHeaders(obj) {
+      return Object.keys(obj).map((el) => ({ id: el, title: el }));
    }
    write(data) {
-      if (Array.isArray(data)) {
-         data.forEach((el) => this.csvStream.write(el));
-      } else {
-         this.csvStream.write(data);
-      }
+      const formatted = this.csvStringifier.stringifyRecords(data);
+      const encoded = iconv.encode(formatted, DEFAULT_ENCODE);
+      this.ws.write(encoded);
    }
 }
 

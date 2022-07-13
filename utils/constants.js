@@ -1,4 +1,2 @@
-const appConstants = {
-	productsOnPage: 36,
-}
-export default appConstants
+export const DEFAULT_DELIMITER = ";";
+export const DEFAULT_ENCODE = "win1251";

@@ -1,4 +1,4 @@
-import readFolderFiles from "./utils/readFolder.js";
+// import readFolderFiles from "./utils/readFolder.js";
 import readCsv from "./utils/CSV/readCsv.js";
 import writeCSVStream from "./utils/CSV/writeCsv.js";
 
@@ -9,6 +9,7 @@ const writePath = "./old/out/Книга2.csv";
 // const files = readFolderFiles(path, readFilesTypes);
 
 const fileData = await readCsv(path);
-const writeCsv = new writeCSVStream(writePath);
+const headers = writeCSVStream.getHeaders(fileData[0]);
+const writeCsv = new writeCSVStream(writePath, headers);
 writeCsv.write(fileData);
 writeCsv.write(fileData);

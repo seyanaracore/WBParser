@@ -3,7 +3,7 @@ import * as fs from "fs";
 const readFolderFiles = (folderPath, fileTypesList) => {
    if (!folderPath) throw new Error("Не указана папка для считывания.");
    if (!Array.isArray(fileTypesList))
-      throw Error("Ожидался массив расширений файлов.");
+      throw new Error("Ожидался массив расширений файлов.");
 
    return (
       fs
