@@ -14,7 +14,7 @@ function filterProductsLinks(linksList, sellerName) {
       .filter((link) => link);
 
    console.log(
-      chalk.green("New products for parse:", checkedLinks.length, "\n")
+      chalk.green("New products for parse:" + checkedLinks.length + "\n")
    );
    return checkedLinks;
 }

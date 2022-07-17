@@ -1,113 +1,128 @@
 import chalk from "chalk";
-import { PRODUCT_ITERATION_DELAY } from "../utils/constants";
-import filterProductsLinks from "./linksFilter";
+import {
+   PAGE_TIMEOUT,
+   PRODUCTS_COUNT_PER_PAGE,
+   PRODUCTS_PER_PAGE_MAX,
+   PRODUCT_ITERATION_DELAY,
+} from "../utils/constants";
+import { errorNotify, succesNotify } from "../utils/consoleNotify";
+import pageHandler from "./pageHandler";
 import { validateLinksList } from "./validators";
 
-async function linksHandler(
-   productsLinks,
-   delay = PRODUCT_ITERATION_DELAY,
-   dataHandler
-) {
-   validateLinksList(productsLinks);
+const DEFAULT_HANDLER_PARAMS = {
+   productIteratationDelay: PRODUCT_ITERATION_DELAY,
+   pageTimeout: PAGE_TIMEOUT,
+   productsPerPageMax: PRODUCTS_PER_PAGE_MAX,
+   productsCountPerPage: PRODUCTS_COUNT_PER_PAGE,
+   pageWaitUntil: "networkidle2",
+};
 
-   const browser = await Puppeteer.launch({
-      headless: true,
-      defaultViewport: null,
-   });
+const checkPageInRange = (i, productsCountPerPage, productsPerPageMax) => {
+   const getMin = () =>
+      (Math.ceil(i / productsPerPageMax) - 1) * productsPerPageMax;
+   const getMax = () =>
+      getMin() +
+      Math.min(productsCountPerPage || productsPerPageMax, productsPerPageMax);
+   return i > getMin() && i <= getMax();
+};
 
-   for (let i = 1; i <= urls.length; i++) {
-      let url = productsLinks[i - 1];
-      if (fetchedData.some((productData) => productData.codes.includes(url))) {
-         continue;
-      }
-      const getMin = () =>
-         (Math.ceil(i / productsPerPageMax) - 1) * productsPerPageMax;
-      const getMax = () =>
-         getMin() +
-         Math.min(
-            productsCountPerPage || productsPerPageMax,
-            productsPerPageMax
-         );
-      if (!(i > getMin() && i <= getMax())) {
-         continue;
-      }
-      const page = await browser.newPage();
-      await page.waitForTimeout((delay - 1) * 1000);
-      await page.setUserAgent(UserAgent.toString());
-      page.setDefaultTimeout(pageTimeout * 1000);
-      await page.goto(url, { waitUntil: "networkidle2" });
-      const productData = await page.evaluate(async () => {
-         window.productData = {
-            codes: [],
-            images: [],
-            sellerName: "",
-         };
-
-         document
-            .querySelectorAll(".swiper-wrapper > li > a.img-plug")
-            .forEach((link) => {
-               if (link?.href) {
-                  window.productData.codes.push(link.href);
-                  let imageSrc = link.childNodes[1].src;
-                  imageSrc = imageSrc.replace(imageSrc.split("/")[3], "big");
-                  let imageFormat =
-                     imageSrc.split(".")[imageSrc.split(".").length - 1];
-                  imageSrc = imageSrc.replace(imageFormat, "jpg");
-                  window.productData.images.push(imageSrc);
-               }
-            });
-
-         window.productData.sellerName =
-            document.querySelector(".seller-info__name")?.textContent || "none";
-         return window.productData.codes.length ? window.productData : null;
-      });
-      if (!productData) {
-         rejectedProducts.push(url);
-         delay += delayUpper;
-         if (delay > maxDelay) delay = maxDelay;
-         console.error(
+const handleParsedData = (productData, dataHandler) => {
+   if (!productData) {
+      //If returned page rejected
+      rejectedProducts.push(url);
+      delay += delayUpper;
+      if (delay > maxDelay) delay = maxDelay;
+      console.error(
+         errorNotify(
             "product:",
             i,
             "current page:",
             Math.ceil(i / productsPerPageMax),
             url,
             "rejected"
-         );
-      } else {
-         delay = productIteratationDelay;
-         fetchedData.push(productData);
-         console.log(
-            "codes:",
-            productData.codes.length,
-            "images:",
-            productData.images.length,
-            "product:",
-            i,
-            "of",
-            urls.length,
-            "current page:",
-            Math.ceil(i / productsPerPageMax),
-            "seller:",
-            productData.sellerName
-         );
-         if (productData.codes.length) {
-            fileStream.writeData(productData);
-         } else {
-            console.log(urls[i - 1]);
-         }
-      }
-      page.close();
+         )
+      );
+   } else {
+      delay = productIteratationDelay;
+      const pageInfo = [
+         "codes:",
+         productData.codes.length,
+         "images:",
+         productData.images.length,
+         "product:",
+         i,
+         "of",
+         productsLinks.length,
+         "current page:",
+         Math.ceil(i / productsPerPageMax),
+         "seller:",
+         productData.sellerName,
+      ];
+
+      fetchedData.push(productData);
+      succesNotify(pageInfo);
+      dataHandler(productData);
    }
+};
+
+const getCodeFromUrl = (url) => url.split("/")[4];
+
+async function linksHandler(productsLinks, params = {}, dataHandler) {
+   validateLinksList(productsLinks);
+
+   const fetchedData = [];
+   const {
+      pageTimeout,
+      pageWaitUntil,
+      productIteratationDelay,
+      productsPerPageMax,
+      productsCountPerPage,
+   } = {
+      DEFAULT_HANDLER_PARAMS,
+      ...params,
+   };
+
+   let delay = productIteratationDelay;
+   const browser = await Puppeteer.launch({
+      headless: true,
+      defaultViewport: null,
+   });
+
+   const page = await browser.newPage();
+   await page.waitForTimeout(delay * 1000);
+   await page.setUserAgent(UserAgent.toString());
+   page.setDefaultTimeout(pageTimeout * 1000);
+
+   let i = 1;
+   for (const url of productsLinks) {
+      //Пропуск уже полученных SKU
+      if (
+         fetchedData.some((productData) =>
+            productData.codes.includes(getCodeFromUrl(url))
+         )
+      ) {
+         continue;
+      }
+      if (!checkPageInRange(i, productsCountPerPage, productsPerPageMax)) {
+         continue;
+      }
+      await page.goto(url, { waitUntil: pageWaitUntil });
+
+      const productData = pageHandler(page);
+      handleParsedData(productData, dataHandler);
+      i++;
+   }
+   page.close();
 
    await browser.close();
 
    if (rejectedProducts.length) {
-      console.error(
-         chalk.red(
-            "\n" + "Rejected product urls count:",
-            rejectedProducts.length
-         )
-      );
+      errorNotify([
+         "\n",
+         "Rejected product urls count:",
+         rejectedProducts.length,
+         "\n",
+      ]);
    }
    return fetchedData;
 }

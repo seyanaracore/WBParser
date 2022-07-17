@@ -4,7 +4,7 @@ export const DEFAULT_ENCODE = "win1251";
 
 //APP
 export const URL = "";
-export const PRODCTS_PER_PAGE_MAX = 100;
+export const PRODUCTS_PER_PAGE_MAX = 100;
 export const PRODUCT_ITERATION_DELAY = 3;
 export const INITIAL_ITERATION_PAGE = false;
 export const PRODUCTS_COUNT_PER_PAGE = false;
