@@ -60,7 +60,7 @@ const handleParsedData = (productData, dataHandler) => {
       ];
 
       fetchedData.push(productData);
-      succesNotify(pageInfo);
+      succesNotify(...pageInfo);
       dataHandler(productData);
    }
 };
@@ -117,12 +117,12 @@ async function linksHandler(productsLinks, params = {}, dataHandler) {
    await browser.close();
 
    if (rejectedProducts.length) {
-      errorNotify([
+      errorNotify(
          "\n",
          "Rejected product urls count:",
          rejectedProducts.length,
-         "\n",
-      ]);
+         "\n"
+      );
    }
    return fetchedData;
 }

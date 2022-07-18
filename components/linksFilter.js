@@ -1,4 +1,4 @@
-import chalk from "chalk";
+import { succesNotify } from "../utils/consoleNotify";
 import { validateLinksList } from "./validators";
 
 function filterProductsLinks(linksList, sellerName) {
@@ -6,16 +6,15 @@ function filterProductsLinks(linksList, sellerName) {
    if (!sellerName || typeof sellerName !== "string")
       throw new Error("Seller name excepted as string");
 
-   const checkedProductsCodes = getSellerFetchedProducts(sellerName);
+   const checkedProductsCodes = getFetchedProducts(sellerName);
 
    linksList = [...new Set(linksList)];
-   const checkedLinks = linksList
-      .filter((productLink) => !checkedProductsCodes.includes(productLink))
-      .filter((link) => link);
-
-   console.log(
-      chalk.green("New products for parse:" + checkedLinks.length + "\n")
+   const checkedLinks = linksList.filter(
+      (productLink) => link && !checkedProductsCodes.includes(productLink)
    );
+   // .filter((link) => link);
+
+   succesNotify("New products for parse:", checkedLinks.length, "\n");
    return checkedLinks;
 }
 

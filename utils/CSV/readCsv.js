@@ -2,7 +2,7 @@ import { createReadStream } from "fs";
 import csvParser from "csv-parser";
 import iconv from "iconv-lite";
 import { Transform } from "stream";
-import { DEFAULT_DELIMITER, DEFAULT_ENCODE } from "../constants";
+import { DEFAULT_DELIMITER, DEFAULT_ENCODE } from "../constants.js";
 
 const decodeStream = new Transform({
    transform(chunk, encoding, callback) {

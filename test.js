@@ -1,15 +1,9 @@
-// import readFolderFiles from "./utils/readFolder.js";
-import readCsv from "./utils/CSV/readCsv.js";
-import writeCSVStream from "./utils/CSV/writeCsv.js";
+import getFetchedProducts from "./components/getFetchedProducts.js";
+import { errorNotify, succesNotify } from "./utils/consoleNotify.js";
 
-// const readFilesTypes = ["csv"];
-const path = "./old/out/Книга1.csv";
-const writePath = "./old/out/Книга2.csv";
+// const filesData = await getFetchedProducts("goorin-brothers");
 
-// const files = readFolderFiles(path, readFilesTypes);
-
-const fileData = await readCsv(path);
-const headers = writeCSVStream.getHeaders(fileData[0]);
-const writeCsv = new writeCSVStream(writePath, headers);
-writeCsv.write(fileData);
-writeCsv.write(fileData);
+// console.log(filesData);
+succesNotify("New products for parse:", 2, "\n");
+errorNotify("New products for parse:", 2, "\n");
+// succesNotify(["New products for parse:", 2, "\n"]);

@@ -1,6 +1,8 @@
 //CSV
 export const DEFAULT_DELIMITER = ";";
 export const DEFAULT_ENCODE = "win1251";
+export const DEFAULT_OUT_PATH = "./out/"
+export const DEFAULT_TYPE_OUT_FILES = "csv"
 
 //APP
 export const URL = "";

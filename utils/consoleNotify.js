@@ -1,12 +1,12 @@
 import chalk from "chalk";
 
-export const errorNotify = (content) => {
+export const errorNotify = (...content) => {
    if (!content) return;
    console.log(
       content
          .map((str) => {
             if (typeof str === "number") {
-               return chalk.redBright(str);
+               return chalk.blue(str);
             } else {
                return chalk.red(str);
             }
@@ -14,13 +14,13 @@ export const errorNotify = (content) => {
          .join(" ")
    );
 };
-export const succesNotify = (content) => {
+export const succesNotify = (...content) => {
    if (!content) return;
    console.log(
       content
          .map((str) => {
             if (typeof str === "number") {
-               return chalk.greenBright(str);
+               return chalk.blue(str);
             } else {
                return chalk.green(str);
             }
