@@ -18,10 +18,9 @@ const newPage = async (url, browser, delay) => {
 };
 async function parseProductsLinks(
    url,
-   delay = PRODUCT_ITERATION_DELAY,
    browser
 ) {
-   const page = await newPage(url, browser, delay);
+   const page = await newPage(url, browser, PRODUCT_ITERATION_DELAY);
    const pageLinks = await page.evaluate(() => {
       const goods = document.querySelectorAll(
          ".product-card-list > div.product-card"

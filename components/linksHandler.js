@@ -1,5 +1,6 @@
-import chalk from "chalk";
 import {
+   DELAY_UPPER,
+   MAX_DELAY,
    PAGE_TIMEOUT,
    PRODUCTS_COUNT_PER_PAGE,
    PRODUCTS_PER_PAGE_MAX,
@@ -8,14 +9,6 @@ import {
 import { errorNotify, succesNotify } from "../utils/consoleNotify";
 import pageHandler from "./pageHandler";
 import { validateLinksList } from "./validators";
-
-const DEFAULT_HANDLER_PARAMS = {
-   productIteratationDelay: PRODUCT_ITERATION_DELAY,
-   pageTimeout: PAGE_TIMEOUT,
-   productsPerPageMax: PRODUCTS_PER_PAGE_MAX,
-   productsCountPerPage: PRODUCTS_COUNT_PER_PAGE,
-   pageWaitUntil: "networkidle2",
-};
 
 const checkPageInRange = (i, productsCountPerPage, productsPerPageMax) => {
    const getMin = () =>
@@ -26,63 +19,14 @@ const checkPageInRange = (i, productsCountPerPage, productsPerPageMax) => {
    return i > getMin() && i <= getMax();
 };
 
-const handleParsedData = (productData, dataHandler) => {
-   if (!productData) {
-      //If returned page rejected
-      rejectedProducts.push(url);
-      delay += delayUpper;
-      if (delay > maxDelay) delay = maxDelay;
-      console.error(
-         errorNotify(
-            "product:",
-            i,
-            "current page:",
-            Math.ceil(i / productsPerPageMax),
-            url,
-            "rejected"
-         )
-      );
-   } else {
-      delay = productIteratationDelay;
-      const pageInfo = [
-         "codes:",
-         productData.codes.length,
-         "images:",
-         productData.images.length,
-         "product:",
-         i,
-         "of",
-         productsLinks.length,
-         "current page:",
-         Math.ceil(i / productsPerPageMax),
-         "seller:",
-         productData.sellerName,
-      ];
-
-      fetchedData.push(productData);
-      succesNotify(...pageInfo);
-      dataHandler(productData);
-   }
-};
-
 const getCodeFromUrl = (url) => url.split("/")[4];
 
-async function linksHandler(productsLinks, params = {}, dataHandler) {
+async function linksHandler(productsLinks, dataHandler) {
    validateLinksList(productsLinks);
+   if(!dataHandler) throw new Error("Excepted data handler")
+   const productsData = [];
 
-   const fetchedData = [];
-   const {
-      pageTimeout,
-      pageWaitUntil,
-      productIteratationDelay,
-      productsPerPageMax,
-      productsCountPerPage,
-   } = {
-      DEFAULT_HANDLER_PARAMS,
-      ...params,
-   };
-
-   let delay = productIteratationDelay;
+   let delay = PRODUCT_ITERATION_DELAY;
    const browser = await Puppeteer.launch({
       headless: true,
       defaultViewport: null,
@@ -91,25 +35,63 @@ async function linksHandler(productsLinks, params = {}, dataHandler) {
    const page = await browser.newPage();
    await page.waitForTimeout(delay * 1000);
    await page.setUserAgent(UserAgent.toString());
-   page.setDefaultTimeout(pageTimeout * 1000);
+   page.setDefaultTimeout(PAGE_TIMEOUT * 1000);
 
    let i = 1;
    for (const url of productsLinks) {
       //Пропуск уже полученных SKU
       if (
-         fetchedData.some((productData) =>
+         productsData.some((productData) =>
             productData.codes.includes(getCodeFromUrl(url))
          )
       ) {
          continue;
       }
-      if (!checkPageInRange(i, productsCountPerPage, productsPerPageMax)) {
+      //Проверка вхождения страницы в допустимый диапазон
+      if (!checkPageInRange(i, PRODUCTS_COUNT_PER_PAGE, PRODUCTS_PER_PAGE_MAX)) {
          continue;
       }
-      await page.goto(url, { waitUntil: pageWaitUntil });
+      await page.goto(url, { waitUntil: "networkidle2" });
 
       const productData = pageHandler(page);
-      handleParsedData(productData, dataHandler);
+      
+      if (!productData) {
+         //If returned page rejected
+         rejectedProducts.push(url);
+         delay += DELAY_UPPER;
+         if (delay > MAX_DELAY) delay = MAX_DELAY;
+         console.error(
+            errorNotify(
+               "product:",
+               i,
+               "current page:",
+               Math.ceil(i / PRODUCTS_PER_PAGE_MAX),
+               url,
+               "rejected"
+            )
+         );
+      } else {
+         delay = PRODUCT_ITERATION_DELAY;
+         const pageInfo = [
+            "codes:",
+            productData.codes.length,
+            "images:",
+            productData.images.length,
+            "product:",
+            i,
+            "of",
+            productsLinks.length,
+            "current page:",
+            Math.ceil(i / PRODUCTS_PER_PAGE_MAX),
+            "seller:",
+            productData.sellerName,
+         ];
+   
+         productsData.push(productData);
+         succesNotify(...pageInfo);
+         dataHandler(productData);
+      }
+
       i++;
    }
    page.close();
@@ -124,7 +106,7 @@ async function linksHandler(productsLinks, params = {}, dataHandler) {
          "\n"
       );
    }
-   return fetchedData;
+   return {rejectedProducts, productsData};
 }
 
 export default linksHandler;

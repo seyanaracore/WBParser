@@ -1,9 +1,9 @@
 import {
    DEFAULT_OUT_PATH,
    DEFAULT_TYPE_OUT_FILES,
-} from "../utils/constants.js";
-import readCsv from "../utils/CSV/readCsv.js";
-import readFolderFiles from "../utils/readFolder.js";
+} from "../../utils/constants.js";
+import readCsv from "../../utils/CSV/readCsv.js";
+import readFolderFiles from "../../utils/readFolder.js";
 import path from "path";
 
 const getFetchedProducts = async (id) => {
