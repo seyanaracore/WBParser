@@ -1,5 +1,5 @@
 import UserAgent from "user-agents";
-import { PAGE_TIMEOUT, PRODUCT_ITERATION_DELAY } from "../utils/constants";
+import { PAGE_TIMEOUT, PRODUCT_ITERATION_DELAY } from "../utils/constants.js";
 
 const newPage = async (url, browser, delay) => {
    if (!url || typeof url !== "string")

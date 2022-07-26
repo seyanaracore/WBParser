@@ -1,34 +1,52 @@
-import { DEFAULT_OUT_PATH } from "../../utils/constants"
-import writeCSVStream from "../../utils/CSV/writeCsv"
-import {join} from "path"
+import {
+   DEFAULT_OUT_PATH,
+   DEFAULT_TYPE_OUT_FILES,
+} from "../../utils/constants.js";
+import writeCSVStream from "../../utils/CSV/writeCsv.js";
+import { join } from "path";
+import getDateAndTime from "../../utils/currentDate.js";
+import log from "../../utils/logWriter.js";
 
-const getDateAndTime = () => {
-   let date_ob = new Date();
-   let date = ("0" + date_ob.getDate()).slice(-2);
-   let month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
-   let year = date_ob.getFullYear();
-   let hours = date_ob.getHours();
-   let minutes = date_ob.getMinutes();
-   let seconds = date_ob.getSeconds();
-   const name =
-      date +
-      "-" +
-      month +
-      "-" +
-      year +
-      "_" +
-      hours +
-      "h" +
-      minutes +
-      "m" +
-      seconds +
-      "s";
-   return name;
+const dataHeaders = writeCSVStream.getHeaders({
+   codes: "codes",
+   images: "images",
+   sellerName: "sellerName",
+});
+export const getDataWriter = (sellerName) => {
+   const path = join(
+      DEFAULT_OUT_PATH,
+      sellerName,
+      getDateAndTime() + "_data." + DEFAULT_TYPE_OUT_FILES
+   );
+   console.log("data csv writer path: " + path)
+   return new writeCSVStream(path, dataHeaders);
 };
 
-const dataHeaders = writeCSVStream.getHeaders([codes, images, sellerName])
-export const getDataWriter = (sellerName) => new writeCSVStream(join(DEFAULT_OUT_PATH, sellerName,getDateAndTime()+"_data"),dataHeaders)
-const errorsHeaders = writeCSVStream.getHeaders([url])
-export const getErrorWriter = (sellerName) => new writeCSVStream(join(DEFAULT_OUT_PATH, "_errors",sellerName + "_" + getDateAndTime()+"_errors"),errorsHeaders)
-const linksHeaders = writeCSVStream.getHeaders([url])
-export const getLinksWriter = (sellerName) => new writeCSVStream(join(DEFAULT_OUT_PATH, "_links",sellerName + "_" + getDateAndTime()+"_links"),linksHeaders)
+const errorsHeaders = writeCSVStream.getHeaders({ url: "url" });
+export const getErrorWriter = (sellerName) =>
+   new writeCSVStream(
+      join(
+         DEFAULT_OUT_PATH,
+         "_errors",
+         sellerName +
+            "_" +
+            getDateAndTime() +
+            "_errors." +
+            DEFAULT_TYPE_OUT_FILES
+      ),
+      errorsHeaders
+   );
+const linksHeaders = writeCSVStream.getHeaders({ url: "url" });
+export const getLinksWriter = (sellerName) =>
+   new writeCSVStream(
+      join(
+         DEFAULT_OUT_PATH,
+         "_links",
+         sellerName +
+            "_" +
+            getDateAndTime() +
+            "_links." +
+            DEFAULT_TYPE_OUT_FILES
+      ),
+      linksHeaders
+   );

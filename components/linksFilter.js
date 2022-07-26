@@ -1,6 +1,6 @@
-import { succesNotify } from "../utils/consoleNotify";
-import getFetchedProducts from "./FS/getFetchedProducts";
-import { validateLinksList } from "./validators";
+import { succesNotify } from "../utils/consoleNotify.js";
+import getFetchedProducts from "./FS/getFetchedProducts.js";
+import { validateLinksList } from "./validators.js";
 
 function filterProductsLinks(linksList, sellerName) {
    validateLinksList(linksList);

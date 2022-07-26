@@ -1,7 +1,11 @@
 import iconv from "iconv-lite";
 import fs from "fs";
 import { createObjectCsvStringifier } from "csv-writer";
-import { DEFAULT_DELIMITER, DEFAULT_ENCODE } from "../constants.js";
+import {
+   DEFAULT_DELIMITER,
+   DEFAULT_ENCODE,
+   DEFAULT_TYPE_OUT_FILES,
+} from "../constants.js";
 
 const validateHeaders = (headers) => {
    return (
@@ -21,7 +25,10 @@ class writeCSVStream {
    constructor(path, headers, del = DEFAULT_DELIMITER) {
       if (!validateHeaders(headers))
          throw new Error("Excepting headers [{id: ''; titile: ''}]");
-
+      const dir = path.split("/").slice(0, path.split("/").length);
+      if (!fs.existsSync(dir)) {
+         fs.mkdirSync(dir, { recursive: true });
+      }
       this.ws = fs.createWriteStream(path, {
          flags: "a",
       });

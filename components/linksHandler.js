@@ -2,13 +2,12 @@ import {
    DELAY_UPPER,
    MAX_DELAY,
    PAGE_TIMEOUT,
-   PRODUCTS_COUNT_PER_PAGE,
    PRODUCTS_PER_PAGE_MAX,
    PRODUCT_ITERATION_DELAY,
-} from "../utils/constants";
-import { errorNotify, succesNotify } from "../utils/consoleNotify";
-import pageHandler from "./pageHandler";
-import { validateLinksList } from "./validators";
+} from "../utils/constants.js";
+import { errorNotify, succesNotify } from "../utils/consoleNotify.js";
+import pageHandler from "./pageHandler.js";
+import { validateLinksList } from "./validators.js";
 
 const checkPageInRange = (i, productsCountPerPage, productsPerPageMax) => {
    const getMin = () =>
@@ -48,7 +47,7 @@ async function linksHandler(productsLinks, dataHandler) {
          continue;
       }
       //Проверка вхождения страницы в допустимый диапазон
-      if (!checkPageInRange(i, PRODUCTS_COUNT_PER_PAGE, PRODUCTS_PER_PAGE_MAX)) {
+      if (!checkPageInRange(i, settings.productsCountPerPage, PRODUCTS_PER_PAGE_MAX)) {
          continue;
       }
       await page.goto(url, { waitUntil: "networkidle2" });

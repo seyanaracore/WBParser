@@ -1,21 +1,22 @@
-import { errorNotify, succesNotify } from "../utils/consoleNotify";
-import { DELAY_UPPER, MAX_DELAY, PRODUCT_ITERATION_DELAY} from "../utils/constants";
-import defaultSettings from "../utils/settings";
-import parseProductsLinks from "./parseProductsLinks";
+import Puppeteer from "puppeteer";
+import { errorNotify, succesNotify } from "../utils/consoleNotify.js";
+import { DELAY_UPPER, MAX_DELAY, PRODUCT_ITERATION_DELAY} from "../utils/constants.js";
+import defaultSettings from "../utils/settings.js";
+import parseProductsLinks from "./parseProductsLinks.js";
 
 async function getProductsLinksList(dataHandler, settings = {}) {
    const browser = await Puppeteer.launch({
       headless: true,
       defaultViewport: null,
    });
-	settings = {...settings, defaultSettings}
+	settings = {...settings, ...defaultSettings}
    let delay = PRODUCT_ITERATION_DELAY;
    const pagesProductsLinks = [];
    const rejectedLinks = [];
 	const targetUrl = settings.url.at(-1) === "/" ? settings.url.slice(0, settings.url.length - 1) : settings.url
 
 	//Сбор ссылок на каждой странице
-   for (let i = settings.initialIterationPage || 1; i < 999; i++) {
+   for (let i = settings.initialIterationPage || 1; i < Infinity; i++) {
       if (//Проверка количества страниц к обработке
          settings.pagesHandlingCount &&
          i === settings.pagesHandlingCount + (settings.initialIterationPage || 1)
@@ -34,10 +35,10 @@ async function getProductsLinksList(dataHandler, settings = {}) {
       }
 
       if (!linksList) {
-         break; //Если вернулся null - товаров нет и страниц больше тоже
+         break; //null - товаров нет и страниц больше тоже
       }
 
-      if (!linksList.length) { //Если вернулся пустой массив, то страница была откланена
+      if (!linksList.length) { //Если пустой массив - страница была откланена
          errorNotify("page:", i, "rejected");
          rejectedLinks.push(pageUrl);
          delay += DELAY_UPPER;

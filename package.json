@@ -9,7 +9,7 @@
       "user-agents": "^1.0.837"
    },
    "scripts": {
-      "parse": "node index.js",
+      "start": "node index.js",
       "test": "node test.js"
    },
    "type": "module"
