@@ -29,6 +29,6 @@ const getDateAndTime = () => {
 const dataHeaders = writeCSVStream.getHeaders([codes, images, sellerName])
 export const getDataWriter = (sellerName) => new writeCSVStream(join(DEFAULT_OUT_PATH, sellerName,getDateAndTime()+"_data"),dataHeaders)
 const errorsHeaders = writeCSVStream.getHeaders([url])
-export const getErrorWriter = (sellerName) => new writeCSVStream(join(DEFAULT_OUT_PATH, sellerName,getDateAndTime()+"_errors"),errorsHeaders)
+export const getErrorWriter = (sellerName) => new writeCSVStream(join(DEFAULT_OUT_PATH, "_errors",sellerName + "_" + getDateAndTime()+"_errors"),errorsHeaders)
 const linksHeaders = writeCSVStream.getHeaders([url])
-export const getLinksWriter = (sellerName) => new writeCSVStream(join(DEFAULT_OUT_PATH, sellerName,getDateAndTime()+"_links"),linksHeaders)
+export const getLinksWriter = (sellerName) => new writeCSVStream(join(DEFAULT_OUT_PATH, "_links",sellerName + "_" + getDateAndTime()+"_links"),linksHeaders)
