@@ -23,9 +23,9 @@ export const succesNotify = (...content) => {
       content
          .map((str) => {
             if (typeof str === "number") {
-               return chalk.blue(str);
+               return chalk.green(str);
             } else {
-               return chalk.magenta(str);
+               return chalk.blueBright(str);
             }
          })
          .join(" ")
