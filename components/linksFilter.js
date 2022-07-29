@@ -1,17 +1,25 @@
 import { succesNotify } from "../utils/consoleNotify.js";
-import getFetchedProducts from "./FS/getFetchedProducts.js";
+import log from "../utils/logWriter.js";
+import getParsedCodes from "./FS/getParsedCodes.js";
 import { validateLinksList } from "./validators.js";
 
-function filterProductsLinks(linksList, sellerName) {
+const getCodeFromUrl = (url) => url.split("/")[4];
+
+async function filterProductsLinks(linksList, sellerName) {
    validateLinksList(linksList);
    if (!sellerName || typeof sellerName !== "string")
       throw new Error("Seller name excepted as string");
 
-   const checkedProductsCodes = getFetchedProducts(sellerName);
+   const checkedProductsCodes = await getParsedCodes(sellerName);
 
+   if (!checkedProductsCodes) return linksList;
+
+   log(`[already parsed products]: ${checkedProductsCodes.join()}`);
    linksList = [...new Set(linksList)];
    const checkedLinks = linksList.filter(
-      (productLink) => link && !checkedProductsCodes.includes(productLink)
+      (productLink) =>
+         productLink &&
+         !checkedProductsCodes.includes(getCodeFromUrl(productLink))
    );
    // .filter((link) => link);
 

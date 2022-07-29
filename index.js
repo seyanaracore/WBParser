@@ -8,17 +8,20 @@ const sellerName =
    settings.url.split("seller/")[1]?.split("/")[0]?.split("?")[0] ||
    settings.url.split("brands/")[1]?.split("/")[0]?.split("?")[0] ||
    "WBGlobal";
+
 const dataWriter = getDataWriter(sellerName);
 const linksWriter = getLinksWriter(sellerName);
 
-const { productsLinks, rejectedLinks } = getProductsLinksList(
-   linksWriter.write
+const { productsLinks, rejectedLinks } = await getProductsLinksList((data) =>
+   linksWriter.write(data)
 );
-console.log(productsLinks);
-process.exit(1);
 
-const filteredLinks = filterProductsLinks(productsLinks, sellerName);
+const filteredLinks = await filterProductsLinks(productsLinks, sellerName);
+
 const { parsedData, rejectedProducts } = await linksHandler(
    filteredLinks,
-   dataWriter.write
+   (data) => dataWriter.write(data)
 );
+
+console.log(parsedData);
+process.exit(1);

@@ -54,7 +54,7 @@ async function getProductsLinksList(dataHandler, settings = {}) {
       "\nSuccesful products links fetched:",
       pagesProductsLinks.length
    );
-	errorNotify("Rejected links:", rejectedLinks.length, "\n");
+	errorNotify("Rejected pages:", rejectedLinks.length, "\n");
 
    await browser.close();
    const productsLinks = [...new Set(pagesProductsLinks)];

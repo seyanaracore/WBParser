@@ -1,3 +1,6 @@
+import Puppeteer from "puppeteer";
+import UserAgent from "user-agents";
+import { errorNotify, succesNotify } from "../utils/consoleNotify.js";
 import {
    DELAY_UPPER,
    MAX_DELAY,
@@ -5,7 +8,8 @@ import {
    PRODUCTS_PER_PAGE_MAX,
    PRODUCT_ITERATION_DELAY,
 } from "../utils/constants.js";
-import { errorNotify, succesNotify } from "../utils/consoleNotify.js";
+import log from "../utils/logWriter.js";
+import settings from "../utils/settings.js";
 import pageHandler from "./pageHandler.js";
 import { validateLinksList } from "./validators.js";
 
@@ -20,10 +24,22 @@ const checkPageInRange = (i, productsCountPerPage, productsPerPageMax) => {
 
 const getCodeFromUrl = (url) => url.split("/")[4];
 
+const isParsedCode = (productsData, url) => {
+   return productsData.find((product) => {
+      const productCode = getCodeFromUrl(url);
+      const isMatch = product.codes.includes(productCode);
+      log(
+         `[isPardedCode]: product code - ${productCode} / isMatch - ${isMatch}`
+      );
+      return isMatch;
+   });
+};
+
 async function linksHandler(productsLinks, dataHandler) {
    validateLinksList(productsLinks);
-   if(!dataHandler) throw new Error("Excepted data handler")
+   if (!dataHandler) throw new Error("Excepted data handler");
    const productsData = [];
+   const rejectedProducts = [];
 
    let delay = PRODUCT_ITERATION_DELAY;
    const browser = await Puppeteer.launch({
@@ -39,21 +55,23 @@ async function linksHandler(productsLinks, dataHandler) {
    let i = 1;
    for (const url of productsLinks) {
       //Пропуск уже полученных SKU
+      if (isParsedCode(productsData, url)) {
+         continue;
+      }
+      //Проверка вхождения страницы в допустимый диапазон
       if (
-         productsData.some((productData) =>
-            productData.codes.includes(getCodeFromUrl(url))
+         !checkPageInRange(
+            i,
+            settings.productsCountPerPage,
+            PRODUCTS_PER_PAGE_MAX
          )
       ) {
          continue;
       }
-      //Проверка вхождения страницы в допустимый диапазон
-      if (!checkPageInRange(i, settings.productsCountPerPage, PRODUCTS_PER_PAGE_MAX)) {
-         continue;
-      }
       await page.goto(url, { waitUntil: "networkidle2" });
 
-      const productData = pageHandler(page);
-      
+      const productData = await pageHandler(page);
+
       if (!productData) {
          //If returned page rejected
          rejectedProducts.push(url);
@@ -85,7 +103,7 @@ async function linksHandler(productsLinks, dataHandler) {
             "seller:",
             productData.sellerName,
          ];
-   
+
          productsData.push(productData);
          succesNotify(...pageInfo);
          dataHandler(productData);
@@ -105,7 +123,7 @@ async function linksHandler(productsLinks, dataHandler) {
          "\n"
       );
    }
-   return {rejectedProducts, productsData};
+   return { productsData, rejectedProducts };
 }
 
 export default linksHandler;

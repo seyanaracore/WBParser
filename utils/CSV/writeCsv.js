@@ -1,11 +1,12 @@
 import iconv from "iconv-lite";
 import fs from "fs";
+import * as nPath from "path"
 import { createObjectCsvStringifier } from "csv-writer";
 import {
    DEFAULT_DELIMITER,
    DEFAULT_ENCODE,
-   DEFAULT_TYPE_OUT_FILES,
 } from "../constants.js";
+import log from "../logWriter.js";
 
 const validateHeaders = (headers) => {
    return (
@@ -25,7 +26,8 @@ class writeCSVStream {
    constructor(path, headers, del = DEFAULT_DELIMITER) {
       if (!validateHeaders(headers))
          throw new Error("Excepting headers [{id: ''; titile: ''}]");
-      const dir = path.split("/").slice(0, path.split("/").length);
+      const dir = path.split(nPath.sep).slice(0, path.split(nPath.sep).length - 1).join(nPath.sep);
+
       if (!fs.existsSync(dir)) {
          fs.mkdirSync(dir, { recursive: true });
       }
@@ -42,7 +44,9 @@ class writeCSVStream {
       return Object.keys(obj).map((el) => ({ id: el, title: el }));
    }
    write(data) {
+      log("write data", data)
       const formatted = this.csvStringifier.stringifyRecords(data);
+      log("formatted data for csv",formatted)
       const encoded = iconv.encode(formatted, DEFAULT_ENCODE);
       this.ws.write(encoded);
    }

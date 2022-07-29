@@ -18,7 +18,6 @@ export const getDataWriter = (sellerName) => {
       sellerName,
       getDateAndTime() + "_data." + DEFAULT_TYPE_OUT_FILES
    );
-   console.log("data csv writer path: " + path)
    return new writeCSVStream(path, dataHeaders);
 };
 
