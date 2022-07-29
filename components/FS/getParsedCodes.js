@@ -1,4 +1,5 @@
 import {
+   DEFAULT_DELIMITER,
    DEFAULT_OUT_PATH,
    DEFAULT_TYPE_OUT_FILES,
 } from "../../utils/constants.js";
@@ -11,20 +12,19 @@ const getParsedCodes = async (id) => {
    const filesPath = path.join(DEFAULT_OUT_PATH, id, "/");
    const filesList = readFolderFiles(filesPath, [DEFAULT_TYPE_OUT_FILES]);
 
-   if (!filesList.length) return;
+   if (!filesList.length) return [];
    const filesData = await Promise.all(
-      filesList.map(
-         (fileName) => {
-            const fileData = readCsv(path.join(filesPath, fileName), ",")
-
-            return fileData.codes
-         }
+      filesList.map((fileName) =>
+         readCsv(path.join(filesPath, fileName), DEFAULT_DELIMITER)
       )
    );
+   const flatData = filesData.flat();
+   const productsCodes = flatData
+      .slice(1, flatData.length) //Удаление заголовков
+      .map((el) => el.codes);
 
-   // console.log(filesData)
-   log(`[previous codes]: ${filesData.length}, ${filesData.join()}`)
-   return filesData;
+   log(`[previous codes]: cnt - ${productsCodes.length}, codes - ${productsCodes.join()}`);
+   return productsCodes;
 };
 
 export default getParsedCodes;

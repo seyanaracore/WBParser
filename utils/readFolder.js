@@ -1,9 +1,9 @@
 import * as fs from "fs";
 
 const readFolderFiles = (folderPath, fileTypesList) => {
-   if (!folderPath) throw new Error("Не указана папка для считывания.");
+   if (!folderPath) throw new Error("Folder not specified");
    if (!Array.isArray(fileTypesList))
-      throw new Error("Ожидался массив расширений файлов.");
+      throw new Error("An array of extensions was expected");
 
    return (
       fs

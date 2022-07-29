@@ -1,17 +1,18 @@
 import Puppeteer from "puppeteer";
 import UserAgent from "user-agents";
-import { errorNotify, succesNotify } from "../utils/consoleNotify.js";
+import { errorNotify, succesNotify } from "../../utils/consoleNotify.js";
 import {
    DELAY_UPPER,
    MAX_DELAY,
    PAGE_TIMEOUT,
    PRODUCTS_PER_PAGE_MAX,
    PRODUCT_ITERATION_DELAY,
-} from "../utils/constants.js";
-import log from "../utils/logWriter.js";
-import settings from "../utils/settings.js";
-import pageHandler from "./pageHandler.js";
-import { validateLinksList } from "./validators.js";
+} from "../../utils/constants.js";
+import log from "../../utils/logWriter.js";
+import settings from "../../utils/settings.js";
+import getCodeFromUrl from "../GetCodeFromUrl.js";
+import pageHandler from "./ProductsParser.js";
+import { validateLinksList } from "../Validators.js";
 
 const checkPageInRange = (i, productsCountPerPage, productsPerPageMax) => {
    const getMin = () =>
@@ -21,8 +22,6 @@ const checkPageInRange = (i, productsCountPerPage, productsPerPageMax) => {
       Math.min(productsCountPerPage || productsPerPageMax, productsPerPageMax);
    return i > getMin() && i <= getMax();
 };
-
-const getCodeFromUrl = (url) => url.split("/")[4];
 
 const isParsedCode = (productsData, url) => {
    return productsData.find((product) => {
@@ -35,7 +34,7 @@ const isParsedCode = (productsData, url) => {
    });
 };
 
-async function linksHandler(productsLinks, dataHandler) {
+async function productsHandler(productsLinks, dataHandler) {
    validateLinksList(productsLinks);
    if (!dataHandler) throw new Error("Excepted data handler");
    const productsData = [];
@@ -106,7 +105,14 @@ async function linksHandler(productsLinks, dataHandler) {
 
          productsData.push(productData);
          succesNotify(...pageInfo);
-         dataHandler(productData);
+         const productsArray = productData.codes.map((code, idx) => {
+            return {
+               codes: code,
+               images: productData.images[idx],
+               sellerName: productData.sellerName,
+            };
+         });
+         dataHandler(productsArray);
       }
 
       i++;
@@ -115,15 +121,14 @@ async function linksHandler(productsLinks, dataHandler) {
 
    await browser.close();
 
-   if (rejectedProducts.length) {
+   rejectedProducts.length &&
       errorNotify(
          "\n",
          "Rejected product urls count:",
          rejectedProducts.length,
          "\n"
       );
-   }
    return { productsData, rejectedProducts };
 }
 
-export default linksHandler;
+export default productsHandler;

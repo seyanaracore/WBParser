@@ -1,8 +1,8 @@
 import Puppeteer from "puppeteer";
-import { errorNotify, succesNotify } from "../utils/consoleNotify.js";
-import { DELAY_UPPER, MAX_DELAY, PRODUCT_ITERATION_DELAY} from "../utils/constants.js";
-import defaultSettings from "../utils/settings.js";
-import parseProductsLinks from "./parseProductsLinks.js";
+import { errorNotify, succesNotify } from "../../utils/consoleNotify.js";
+import { DELAY_UPPER, MAX_DELAY, PRODUCT_ITERATION_DELAY} from "../../utils/constants.js";
+import defaultSettings from "../../utils/settings.js";
+import parseProductsLinks from "./LinksParser.js";
 
 async function getProductsLinksList(dataHandler, settings = {}) {
    const browser = await Puppeteer.launch({
@@ -54,7 +54,7 @@ async function getProductsLinksList(dataHandler, settings = {}) {
       "\nSuccesful products links fetched:",
       pagesProductsLinks.length
    );
-	errorNotify("Rejected pages:", rejectedLinks.length, "\n");
+	rejectedLinks.length && errorNotify("Rejected pages:", rejectedLinks.length, "\n");
 
    await browser.close();
    const productsLinks = [...new Set(pagesProductsLinks)];

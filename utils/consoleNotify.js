@@ -1,9 +1,9 @@
 import chalk from "chalk";
-import log from "./logWriter.js"
+import log from "./logWriter.js";
 
 export const errorNotify = (...content) => {
    if (!content) return;
-   log("[error]: " + content.join(" "))
+   log("[error]: " + content.join(" "));
    console.log(
       content
          .map((str) => {
@@ -18,14 +18,14 @@ export const errorNotify = (...content) => {
 };
 export const succesNotify = (...content) => {
    if (!content) return;
-   log("[notify]: " + content.join(" "))
+   log("[notify]: " + content.join(" "));
    console.log(
       content
          .map((str) => {
             if (typeof str === "number") {
                return chalk.blue(str);
             } else {
-               return chalk.green(str);
+               return chalk.magenta(str);
             }
          })
          .join(" ")

@@ -18,3 +18,6 @@ export const SORTING_TYPES = [
    "sale",
    "popular",
 ];
+
+//OTHER
+export const DEFAULT_LOGS_PATH = "./logs"

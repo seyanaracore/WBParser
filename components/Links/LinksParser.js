@@ -1,7 +1,10 @@
 import UserAgent from "user-agents";
-import { PAGE_TIMEOUT, PRODUCT_ITERATION_DELAY } from "../utils/constants.js";
+import {
+   PAGE_TIMEOUT,
+   PRODUCT_ITERATION_DELAY,
+} from "../../utils/constants.js";
 
-const newPage = async (url, browser, delay) => {
+const newPage = async (url, browser, delay = PRODUCT_ITERATION_DELAY) => {
    if (!url || typeof url !== "string")
       throw new Error("Url was expected as a string");
    if (!delay || typeof delay !== "number")
@@ -16,10 +19,7 @@ const newPage = async (url, browser, delay) => {
 
    return page;
 };
-async function parseProductsLinks(
-   url,
-   browser
-) {
+async function parseProductsLinks(url, browser) {
    const page = await newPage(url, browser, PRODUCT_ITERATION_DELAY);
    const pageLinks = await page.evaluate(() => {
       const goods = document.querySelectorAll(

@@ -5,7 +5,6 @@ import {
 import writeCSVStream from "../../utils/CSV/writeCsv.js";
 import { join } from "path";
 import getDateAndTime from "../../utils/currentDate.js";
-import log from "../../utils/logWriter.js";
 
 const dataHeaders = writeCSVStream.getHeaders({
    codes: "codes",
