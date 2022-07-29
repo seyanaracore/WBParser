@@ -1,64 +1,80 @@
 import Puppeteer from "puppeteer";
 import { errorNotify, succesNotify } from "../../utils/consoleNotify.js";
-import { DELAY_UPPER, MAX_DELAY, PRODUCT_ITERATION_DELAY} from "../../utils/constants.js";
+import {
+   DELAY_UPPER,
+   MAX_DELAY,
+   PRODUCTS_PER_PAGE_MAX,
+   PRODUCT_ITERATION_DELAY,
+} from "../../utils/constants.js";
 import defaultSettings from "../../utils/settings.js";
-import parseProductsLinks from "./LinksParser.js";
+import linksParser from "./LinksParser.js";
+
+const isPageInRange = (pageNum, settings) => {
+   const initPage = settings.initialIterationPage || 1;
+   const { pagesHandlingCount, productsCountPerPage } =
+      settings;
+
+   return (
+      (pagesHandlingCount && pageNum === pagesHandlingCount + initPage) ||
+      (productsCountPerPage &&
+         pageNum >=
+            Math.ceil(productsCountPerPage / PRODUCTS_PER_PAGE_MAX) + initPage)
+   );
+};
 
 async function getProductsLinksList(dataHandler, settings = {}) {
    const browser = await Puppeteer.launch({
       headless: true,
       defaultViewport: null,
    });
-	settings = {...settings, ...defaultSettings}
+   settings = { ...settings, ...defaultSettings };
    let delay = PRODUCT_ITERATION_DELAY;
    const pagesProductsLinks = [];
    const rejectedLinks = [];
-	const targetUrl = settings.url.at(-1) === "/" ? settings.url.slice(0, settings.url.length - 1) : settings.url
+   const targetUrl =
+      settings.url.at(-1) === "/"
+         ? settings.url.slice(0, settings.url.length - 1)
+         : settings.url;
 
-	//Сбор ссылок на каждой странице
+   //Сбор ссылок на каждой странице
    for (let i = settings.initialIterationPage || 1; i < Infinity; i++) {
-      if (//Проверка количества страниц к обработке
-         settings.pagesHandlingCount &&
-         i === settings.pagesHandlingCount + (settings.initialIterationPage || 1)
-      ) {
-         break;
-      }
+      if (!isPageInRange(i, settings)) break; //Проверка количества страниц к обработке
 
       const pageUrl = targetUrl + `?sort=${settings.sorting}&page=${i}`;
-
       let linksList;
+
       try {
-         linksList = await parseProductsLinks(pageUrl, browser);
+         linksList = await linksParser(pageUrl, browser);
       } catch (err) {
-         errorNotify(err)
+         errorNotify(err);
          linksList = [];
       }
 
-      if (!linksList) {
-         break; //null - товаров нет и страниц больше тоже
-      }
+      if (!linksList) break; //null - товаров нет и страниц больше тоже
 
-      if (!linksList.length) { //Если пустой массив - страница была откланена
+      if (!linksList.length) {
+         //Если пустой массив - страница была откланена
          errorNotify("page:", i, "rejected");
          rejectedLinks.push(pageUrl);
          delay += DELAY_UPPER;
          if (delay > MAX_DELAY) delay = MAX_DELAY;
       } else {
          succesNotify(pageUrl, "page:", i, "products:", linksList.length);
-         dataHandler(linksList.map(el => ({url: el})));
+         dataHandler(linksList.map((el) => ({ url: el })));
          pagesProductsLinks.push(...linksList);
          delay = PRODUCT_ITERATION_DELAY;
       }
    }
-	succesNotify(
+   succesNotify(
       "\nSuccesful products links fetched:",
       pagesProductsLinks.length
    );
-	rejectedLinks.length && errorNotify("Rejected pages:", rejectedLinks.length, "\n");
+   rejectedLinks.length &&
+      errorNotify("Rejected pages:", rejectedLinks.length, "\n");
 
    await browser.close();
    const productsLinks = [...new Set(pagesProductsLinks)];
    succesNotify("Products list count:", productsLinks.length);
-   return {productsLinks, rejectedLinks};
+   return { productsLinks, rejectedLinks };
 }
-export default getProductsLinksList
+export default getProductsLinksList;
