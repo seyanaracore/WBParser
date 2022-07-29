@@ -12,7 +12,7 @@ import log from "../../utils/logWriter.js";
 import settings from "../../utils/settings.js";
 import getCodeFromUrl from "../GetCodeFromUrl.js";
 import pageHandler from "./ProductsParser.js";
-import { validateLinksList } from "../Validators.js";
+import { validateLinksList } from "../../utils/validators.js";
 
 const checkPageInRange = (i, productsCountPerPage, productsPerPageMax) => {
    const getMin = () =>

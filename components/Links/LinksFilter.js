@@ -1,7 +1,7 @@
 import { succesNotify } from "../../utils/consoleNotify.js";
 import getParsedCodes from "../FS/getParsedCodes.js";
 import getCodeFromUrl from "../GetCodeFromUrl.js";
-import { validateLinksList, validateSellerName } from "../Validators.js";
+import { validateLinksList, validateSellerName } from "../../utils/validators.js";
 
 async function filterProductsLinks(linksList, sellerName) {
    validateLinksList(linksList);
