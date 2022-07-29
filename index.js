@@ -4,7 +4,7 @@ import filterProductsLinks from "./components/Links/LinksFilter.js";
 import productsHandler from "./components/Products/ParseProducts.js";
 import getSellerName from "./components/GetSellerName.js";
 
-const sellerName = getSellerName()
+const sellerName = getSellerName();
 const dataWriter = getDataWriter(sellerName);
 const linksWriter = getLinksWriter(sellerName);
 

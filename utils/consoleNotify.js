@@ -3,31 +3,25 @@ import log from "./logWriter.js";
 
 export const errorNotify = (...content) => {
    if (!content) return;
+   
    log("[error]: " + content.join(" "));
    console.log(
       content
-         .map((str) => {
-            if (typeof str === "number") {
-               return chalk.blue(str);
-            } else {
-               return chalk.red(str);
-            }
-         })
+         .map((str) =>
+            typeof str === "number" ? chalk.blue(str) : chalk.red(str)
+         )
          .join(" ")
    );
 };
 export const succesNotify = (...content) => {
    if (!content) return;
+
    log("[notify]: " + content.join(" "));
    console.log(
       content
-         .map((str) => {
-            if (typeof str === "number") {
-               return chalk.green(str);
-            } else {
-               return chalk.blueBright(str);
-            }
-         })
+         .map((str) =>
+            typeof str === "number" ? chalk.green(str) : chalk.blueBright(str)
+         )
          .join(" ")
    );
 };
