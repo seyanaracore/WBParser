@@ -71,12 +71,12 @@ async function productsHandler(productsLinks, dataHandler) {
          if (delay > MAX_DELAY) delay = MAX_DELAY;
          console.error(
             errorNotify(
-               "product:",
+               "rejected product:",
                i,
-               "current page:",
+               "page:",
                Math.ceil(i / PRODUCTS_PER_PAGE_MAX),
-               url,
-               "rejected"
+               "url:",
+               url
             )
          );
       } else {
@@ -107,19 +107,13 @@ async function productsHandler(productsLinks, dataHandler) {
          });
          dataHandler(productsArray);
       }
-
    }
    page.close();
 
    await browser.close();
 
    rejectedProducts.length &&
-      errorNotify(
-         "\n",
-         "Rejected product urls count:",
-         rejectedProducts.length,
-         "\n"
-      );
+      errorNotify("\nProducts rejected count:", rejectedProducts.length + "\n");
    return { productsData, rejectedProducts };
 }
 
