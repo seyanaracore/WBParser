@@ -23,16 +23,8 @@ const checkPageInRange = (i, productsCountPerPage, productsPerPageMax) => {
    return i > getMin() && i <= getMax();
 };
 
-const isParsedCode = (productsData, url) => {
-   return productsData.find((product) => {
-      const productCode = getCodeFromUrl(url);
-      const isMatch = product.codes.includes(productCode);
-      log(
-         `[isPardedCode]: product code - ${productCode} / isMatch - ${isMatch}`
-      );
-      return isMatch;
-   });
-};
+const isParsedCode = (productsData, url) =>
+   productsData.find((product) => product.codes.includes(getCodeFromUrl(url)));
 
 async function productsHandler(productsLinks, dataHandler) {
    validateLinksList(productsLinks);
