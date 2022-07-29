@@ -43,8 +43,9 @@ async function productsHandler(productsLinks, dataHandler) {
    await page.setUserAgent(UserAgent.toString());
    page.setDefaultTimeout(PAGE_TIMEOUT * 1000);
 
-   let i = 1;
+   let i = 0;
    for (const url of productsLinks) {
+      i++;
       //Пропуск уже полученных SKU
       if (isParsedCode(productsData, url)) {
          continue;
@@ -107,7 +108,6 @@ async function productsHandler(productsLinks, dataHandler) {
          dataHandler(productsArray);
       }
 
-      i++;
    }
    page.close();
 
