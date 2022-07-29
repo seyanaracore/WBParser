@@ -8,18 +8,21 @@ import {
    PRODUCTS_PER_PAGE_MAX,
    PRODUCT_ITERATION_DELAY,
 } from "../../utils/constants.js";
-import log from "../../utils/logWriter.js";
 import settings from "../../utils/settings.js";
 import getCodeFromUrl from "../GetCodeFromUrl.js";
 import pageHandler from "./ProductsParser.js";
 import { validateLinksList } from "../../utils/validators.js";
 
-const checkPageInRange = (i, productsCountPerPage, productsPerPageMax) => {
+const checkPageInRange = (i, settings) => {
+   const { productsCountPerPage, pagesHandlingCount } = settings;
    const getMin = () =>
-      (Math.ceil(i / productsPerPageMax) - 1) * productsPerPageMax;
+      (Math.ceil(i / PRODUCTS_PER_PAGE_MAX) - 1) * PRODUCTS_PER_PAGE_MAX;
    const getMax = () =>
       getMin() +
-      Math.min(productsCountPerPage || productsPerPageMax, productsPerPageMax);
+      Math.min(
+         productsCountPerPage * pagesHandlingCount || PRODUCTS_PER_PAGE_MAX,
+         PRODUCTS_PER_PAGE_MAX
+      );
    return i > getMin() && i <= getMax();
 };
 
@@ -47,41 +50,30 @@ async function productsHandler(productsLinks, dataHandler) {
    for (const url of productsLinks) {
       i++;
       //Пропуск уже полученных SKU
-      if (isParsedCode(productsData, url)) {
-         continue;
-      }
+      if (isParsedCode(productsData, url)) continue;
       //Проверка вхождения страницы в допустимый диапазон
-      if (
-         !checkPageInRange(
-            i,
-            settings.productsCountPerPage,
-            PRODUCTS_PER_PAGE_MAX
-         )
-      ) {
-         continue;
-      }
+      if (!checkPageInRange(i, settings)) continue;
+
       await page.goto(url, { waitUntil: "networkidle2" });
 
       const productData = await pageHandler(page);
 
       if (!productData) {
-         //If returned page rejected
+         //Если страница отклонена
          rejectedProducts.push(url);
          delay += DELAY_UPPER;
          if (delay > MAX_DELAY) delay = MAX_DELAY;
-         console.error(
-            errorNotify(
-               "rejected product:",
-               i,
-               "page:",
-               Math.ceil(i / PRODUCTS_PER_PAGE_MAX),
-               "url:",
-               url
-            )
+         errorNotify(
+            "rejected product:",
+            i,
+            "page:",
+            Math.ceil(i / PRODUCTS_PER_PAGE_MAX),
+            "url:",
+            url
          );
       } else {
          delay = PRODUCT_ITERATION_DELAY;
-         const pageInfo = [
+         succesNotify(
             "codes:",
             productData.codes.length,
             "images:",
@@ -93,11 +85,8 @@ async function productsHandler(productsLinks, dataHandler) {
             "current page:",
             Math.ceil(i / PRODUCTS_PER_PAGE_MAX),
             "seller:",
-            productData.sellerName,
-         ];
-
-         productsData.push(productData);
-         succesNotify(...pageInfo);
+            productData.sellerName
+         );
          const productsArray = productData.codes.map((code, idx) => {
             return {
                codes: code,
@@ -106,6 +95,7 @@ async function productsHandler(productsLinks, dataHandler) {
             };
          });
          dataHandler(productsArray);
+         productsData.push(productData);
       }
    }
    page.close();
@@ -114,6 +104,7 @@ async function productsHandler(productsLinks, dataHandler) {
 
    rejectedProducts.length &&
       errorNotify("\nProducts rejected count:", rejectedProducts.length + "\n");
+   console.log(productsData, rejectedProducts);
    return { productsData, rejectedProducts };
 }
 

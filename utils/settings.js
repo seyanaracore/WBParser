@@ -1,11 +1,11 @@
 import { SORTING_TYPES } from "./constants.js"
 
 const settings = {
-	url: "https://www.wildberries.ru/seller/774209/beysbolki",
+	url: "https://www.wildberries.ru/brands/goorin-brothers",
 	sorting: SORTING_TYPES[0],
 	initialIterationPage: null,
-	productsCountPerPage: null,
-	pagesHandlingCount: null,
+	productsCountPerPage: 20,
+	pagesHandlingCount: 2,
 }
 
 export default settings

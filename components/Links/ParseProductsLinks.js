@@ -9,14 +9,14 @@ import {
 import defaultSettings from "../../utils/settings.js";
 import linksParser from "./LinksParser.js";
 
-const isPageInRange = (pageNum, settings) => {
+const pageNotInRange = (pageNum, settings) => {
    const initPage = settings.initialIterationPage || 1;
-   const { pagesHandlingCount, productsCountPerPage } =
-      settings;
+   const { pagesHandlingCount, productsCountPerPage } = settings;
 
    return (
       (pagesHandlingCount && pageNum === pagesHandlingCount + initPage) ||
       (productsCountPerPage &&
+         pagesHandlingCount &&
          pageNum >=
             Math.ceil(productsCountPerPage / PRODUCTS_PER_PAGE_MAX) + initPage)
    );
@@ -38,7 +38,7 @@ async function getProductsLinksList(dataHandler, settings = {}) {
 
    //Сбор ссылок на каждой странице
    for (let i = settings.initialIterationPage || 1; i < Infinity; i++) {
-      if (!isPageInRange(i, settings)) break; //Проверка количества страниц к обработке
+      if (pageNotInRange(i, settings)) break; //Проверка количества страниц к обработке
 
       const pageUrl = targetUrl + `?sort=${settings.sorting}&page=${i}`;
       let linksList;

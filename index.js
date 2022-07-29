@@ -14,9 +14,9 @@ const { productsLinks, rejectedLinks } = await getProductsLinksList((data) =>
 
 const filteredLinks = await filterProductsLinks(productsLinks, sellerName);
 
-const { parsedData, rejectedProducts } = await productsHandler(
+const { productsData, rejectedProducts } = await productsHandler(
    filteredLinks,
    (data) => dataWriter.write(data)
 );
 
-console.log(parsedData);
+console.log(rejectedProducts);
