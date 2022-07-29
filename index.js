@@ -2,13 +2,9 @@ import { getDataWriter, getLinksWriter } from "./components/FS/writeStreams.js";
 import getProductsLinksList from "./components/Links/ParseProductsLinks.js";
 import filterProductsLinks from "./components/Links/LinksFilter.js";
 import productsHandler from "./components/Products/ParseProducts.js";
-import settings from "./utils/settings.js";
+import getSellerName from "./components/GetSellerName.js";
 
-const sellerName =
-   settings.url.split("seller/")[1]?.split("/")[0]?.split("?")[0] ||
-   settings.url.split("brands/")[1]?.split("/")[0]?.split("?")[0] ||
-   "WBGlobal";
-
+const sellerName = getSellerName()
 const dataWriter = getDataWriter(sellerName);
 const linksWriter = getLinksWriter(sellerName);
 
