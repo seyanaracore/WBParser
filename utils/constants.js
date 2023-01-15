@@ -6,10 +6,10 @@ export const DEFAULT_TYPE_OUT_FILES = "csv"
 
 //APP
 export const PRODUCTS_PER_PAGE_MAX = 100;
-export const PRODUCT_ITERATION_DELAY = 3;
-export const PAGE_TIMEOUT = 45;
-export const MAX_DELAY = 20;
-export const DELAY_UPPER = 2;
+export const PRODUCT_ITERATION_DELAY = 3; // Секунды
+export const PAGE_TIMEOUT = 45; // Секунды
+export const MAX_DELAY = 20; // Секунды
+export const DELAY_UPPER = 2; // Секунды
 export const SORTING_TYPES = [
    "newly",
    "rate",

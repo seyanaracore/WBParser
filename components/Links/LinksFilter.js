@@ -4,22 +4,23 @@ import getCodeFromUrl from "../GetCodeFromUrl.js";
 import { validateLinksList, validateSellerName } from "../../utils/validators.js";
 
 async function filterProductsLinks(linksList, sellerName) {
-   validateLinksList(linksList);
-   validateSellerName(sellerName);
+   validateLinksList(linksList)
+   validateSellerName(sellerName)
 
-   const parsedCodes = await getParsedCodes(sellerName);
+   const parsedCodes = await getParsedCodes(sellerName)
 
-   if (!parsedCodes.length) return linksList;
+   if (!parsedCodes.length) return linksList
 
-   linksList = [...new Set(linksList)];
+   linksList = [...new Set(linksList)]
+
    const checkedLinks = linksList.filter(
       (productLink) =>
          productLink &&
          !parsedCodes.includes(getCodeFromUrl(productLink))
    );
 
-   succesNotify("New products for parse:", checkedLinks.length, "\n");
-   return checkedLinks;
+   succesNotify("New products for parse:", checkedLinks.length, "\n")
+   return checkedLinks
 }
 
 export default filterProductsLinks;

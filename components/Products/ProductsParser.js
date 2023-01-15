@@ -24,6 +24,7 @@ const pageHandler = async (page) => {
 
       productData.sellerName =
          document.querySelector(".seller-info__name")?.textContent || "none";
+
       return productData.codes.length ? productData : null;
    });
 };

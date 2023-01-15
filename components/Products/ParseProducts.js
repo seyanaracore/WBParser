@@ -23,30 +23,35 @@ const checkPageInRange = (i, settings) => {
          productsCountPerPage * pagesHandlingCount || PRODUCTS_PER_PAGE_MAX,
          PRODUCTS_PER_PAGE_MAX
       );
+
    return i > getMin() && i <= getMax();
 };
 
 const isParsedCode = (productsData, url) =>
-   productsData.find((product) => product.codes.includes(getCodeFromUrl(url)));
+   productsData.find((product) => product.codes.includes(getCodeFromUrl(url)))
 
 async function productsHandler(productsLinks, dataHandler) {
-   validateLinksList(productsLinks);
+   validateLinksList(productsLinks)
+
    if (!dataHandler) throw new Error("Excepted data handler");
+
    const productsData = [];
    const rejectedProducts = [];
 
    let delay = PRODUCT_ITERATION_DELAY;
+
    const browser = await Puppeteer.launch({
       headless: true,
       defaultViewport: null,
    });
-
    const page = await browser.newPage();
-   await page.waitForTimeout(delay * 1000);
-   await page.setUserAgent(UserAgent.toString());
-   page.setDefaultTimeout(PAGE_TIMEOUT * 1000);
 
-   let i = 0;
+   await page.waitForTimeout(delay * 1000)
+   await page.setUserAgent(UserAgent.toString())
+   page.setDefaultTimeout(PAGE_TIMEOUT * 1000)
+
+   let i = 0
+
    for (const url of productsLinks) {
       i++;
       //Пропуск уже полученных SKU
@@ -94,6 +99,7 @@ async function productsHandler(productsLinks, dataHandler) {
                sellerName: productData.sellerName,
             };
          });
+
          dataHandler(productsArray);
          productsData.push(productData);
       }
@@ -104,7 +110,9 @@ async function productsHandler(productsLinks, dataHandler) {
 
    rejectedProducts.length &&
       errorNotify("\nProducts rejected count:", rejectedProducts.length + "\n");
+
    console.log(productsData, rejectedProducts);
+
    return { productsData, rejectedProducts };
 }
 

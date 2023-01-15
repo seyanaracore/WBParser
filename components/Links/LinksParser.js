@@ -19,8 +19,10 @@ const newPage = async (url, browser, delay = PRODUCT_ITERATION_DELAY) => {
 
    return page;
 };
+
 async function parseProductsLinks(url, browser) {
    const page = await newPage(url, browser, PRODUCT_ITERATION_DELAY);
+
    const pageLinks = await page.evaluate(() => {
       const goods = document.querySelectorAll(
          ".product-card-list > div.product-card"
@@ -30,9 +32,11 @@ async function parseProductsLinks(url, browser) {
          document.querySelector("#divGoodsNotFoundBackMain") ||
          document.querySelector("#divGoodsNotFound");
       const pageError = !errorBlock?.classList?.contains("hide");
+
       if (pageError) {
          return null;
       }
+
       for (let good of goods) {
          const link = good?.childNodes[1]?.childNodes[1]?.href;
          links.push(link);
@@ -41,6 +45,7 @@ async function parseProductsLinks(url, browser) {
    });
 
    await page.close();
+
    return pageLinks;
 }
 

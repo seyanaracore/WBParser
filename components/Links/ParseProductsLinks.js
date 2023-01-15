@@ -27,8 +27,10 @@ async function getProductsLinksList(dataHandler, settings = {}) {
       headless: true,
       defaultViewport: null,
    });
-   settings = { ...settings, ...defaultSettings };
+   settings = { ...defaultSettings, ...settings };
+
    let delay = PRODUCT_ITERATION_DELAY;
+
    const pagesProductsLinks = [];
    const rejectedLinks = [];
    const targetUrl =
@@ -69,12 +71,15 @@ async function getProductsLinksList(dataHandler, settings = {}) {
       "\nSuccesful products links fetched:",
       pagesProductsLinks.length
    );
-   rejectedLinks.length &&
-      errorNotify("Rejected pages:", rejectedLinks.length, "\n");
+   
+   if(rejectedLinks.length) errorNotify("Rejected pages:", rejectedLinks.length, "\n")
 
-   await browser.close();
-   const productsLinks = [...new Set(pagesProductsLinks)];
-   succesNotify("Products list count:", productsLinks.length);
+   await browser.close()
+
+   const productsLinks = [...new Set(pagesProductsLinks)]
+
+   succesNotify("Products list count:", productsLinks.length)
+
    return { productsLinks, rejectedLinks };
 }
 export default getProductsLinksList;
