@@ -1,0 +1,19 @@
+{
+	"DEFAULT_DELIMITER": ";",
+	"DEFAULT_ENCODE": "win1251",
+	"DEFAULT_OUT_PATH": "./out/",
+	"DEFAULT_TYPE_OUT_FILES": "csv",
+	"PRODUCTS_PER_PAGE_MAX": 100,
+	"PRODUCT_ITERATION_DELAY": 3,
+	"MAX_DELAY": 20,
+	"DELAY_UPPER": 2,
+	"SORTING_TYPES": [
+   "newly",
+   "rate",
+   "priceup",
+   "pricedown",
+   "sale",
+   "popular"
+	],
+	"DEFAULT_LOGS_PATH": "./logs"
+}
