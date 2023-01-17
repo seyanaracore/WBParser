@@ -1,28 +1,26 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <b-nav tabs small>
+      <b-nav-item :active="page" @click="page=true">Main</b-nav-item>
+      <b-nav-item :active="!page" @click="page=false">Settings</b-nav-item>
+    </b-nav>
+    <main>
+      <KeepAlive>
+        <MainPage v-if="page"/>
+        <SettingsPage v-else />
+      </KeepAlive>
+    </main>
   </div>
 </template>
 
-<script>
-import HelloWorld from './components/HelloWorld.vue'
+<script setup>
+import { ref } from 'vue'
+import MainPage from "./views/MainPage.vue"
+import SettingsPage from "./views/SettingsPage.vue"
 
-export default {
-  name: 'App',
-  components: {
-    HelloWorld
-  }
-}
+const page = ref(true)
 </script>
 
-<style lang="scss">
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+<style>
+
 </style>
