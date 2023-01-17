@@ -4,18 +4,18 @@ import express from '@feathersjs/express'
 // import { Server } from 'socket.io'
 import { join, dirname } from 'path'
 
-import Storage from './Storage.js'
-import Respository from './Repository.js'
-import RestController from './RestController.js'
+import Storage from './components/Storage.js'
+import Respository from './components/Repository.js'
+import RestController from './components/RestController.js'
 
 async function runApp() {
   const appPort = 3030
   const __dirname = dirname(process.argv[1])
 
-  const settingsDb = join(__dirname, '../data/settings.json')
-  const settingsBackup = join(__dirname, '../data/settings.backup.json')
-  const constantsDb = join(__dirname, '../data/constants.json')
-  const constantsBackup = join(__dirname, '../data/constants.backup.json')
+  const settingsDb = join(__dirname, 'data/settings.json')
+  const settingsBackup = join(__dirname, 'data/settings.backup.json')
+  const constantsDb = join(__dirname, 'data/constants.json')
+  const constantsBackup = join(__dirname, 'data/constants.backup.json')
 
   const settingsStorage = new Storage(settingsDb, 'settings', settingsBackup)
   await settingsStorage.read()
@@ -43,6 +43,10 @@ async function runApp() {
   app.listen(appPort).on('listening', () => {
     console.log(`Server started ${appPort}`)
   })
+
+  app.get('/', (req, res) => {
+    res.send(join(__dirname, 'public/index.html'));
+  });
 
   app.on('error', () => {
     console.log('Failed to start server.')
