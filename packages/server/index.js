@@ -1,21 +1,23 @@
 import '@feathersjs/transport-commons'
 import feathers from '@feathersjs/feathers'
 import express from '@feathersjs/express'
-// import { Server } from 'socket.io'
 import { join, dirname } from 'path'
-
+import open from 'open'
 import Storage from './components/Storage.js'
-import Respository from './components/Repository.js'
+import Repository from './components/Repository.js'
 import RestController from './components/RestController.js'
+import { APP_PORT } from './constants/index.js'
+import ParserRepository from './components/ParserRepository.js'
+
+const url = `http://localhost:${APP_PORT}`
 
 async function runApp() {
-  const appPort = 3030
   const __dirname = dirname(process.argv[1])
 
-  const settingsDb = join(__dirname, 'data/settings.json')
-  const settingsBackup = join(__dirname, 'data/settings.backup.json')
-  const constantsDb = join(__dirname, 'data/constants.json')
-  const constantsBackup = join(__dirname, 'data/constants.backup.json')
+  const settingsDb = join(__dirname, 'data', 'settings.json')
+  const settingsBackup = join(__dirname, 'data', 'settings.backup.json')
+  const constantsDb = join(__dirname, 'data', 'constants.json')
+  const constantsBackup = join(__dirname, 'data', 'constants.backup.json')
 
   const settingsStorage = new Storage(settingsDb, 'settings', settingsBackup)
   await settingsStorage.read()
@@ -36,27 +38,24 @@ async function runApp() {
   app.use(express.static('public'))
   app.configure(express.rest())
 
-  app.use('/settings', new RestController(new Respository(settingsStorage)))
-  app.use('/constants', new RestController(new Respository(constantsStorage)))
+  app.use('/settings', new RestController(new Repository(settingsStorage)))
+  app.use('/constants', new RestController(new Repository(constantsStorage)))
+  app.use('/parser', new RestController(new ParserRepository()))
   app.use(express.errorHandler())
 
-  app.listen(appPort).on('listening', () => {
-    console.log(`Server started ${appPort}`)
+  app.listen(APP_PORT).on('listening', () => {
+    console.log(`Парсер доступен по ссылке: ${url}`)
+
+    open(url)
   })
 
   app.get('/', (req, res) => {
-    res.send(join(__dirname, 'public/index.html'));
-  });
+    res.send(join(__dirname, 'public/index.html'))
+  })
 
   app.on('error', () => {
     console.log('Failed to start server.')
   })
-
-  // const io = new Server(app)
-
-  // io.on('connection', (socket) => {
-  //   console.log('a user connected')
-  // })
 }
 
 runApp()

@@ -1,5 +1,3 @@
-import * as feathersjs from '@feathersjs/errors'
-
 export default class RestController {
   repository = null
 
@@ -13,12 +11,17 @@ export default class RestController {
 
       return this.repository.get()
     }
+    if (query.stop) {
+      return await this.repository.stop()
+    }
+    if (query.isParsing) {
+      return await this.repository.isParsing()
+    }
 
     return this.repository.get()
   }
 
   async create(data) {
-    console.log(typeof data)
     return this.repository.set(data)
   }
 }

@@ -1,19 +1,64 @@
 {
-	"DEFAULT_DELIMITER": ";",
-	"DEFAULT_ENCODE": "win1251",
-	"DEFAULT_OUT_PATH": "./out/",
-	"DEFAULT_TYPE_OUT_FILES": "csv",
-	"PRODUCTS_PER_PAGE_MAX": 100,
-	"PRODUCT_ITERATION_DELAY": 3,
-	"MAX_DELAY": 20,
-	"DELAY_UPPER": 2,
-	"SORTING_TYPES": [
-   "newly",
-   "rate",
-   "priceup",
-   "pricedown",
-   "sale",
-   "popular"
-	],
-	"DEFAULT_LOGS_PATH": "./logs"
+  "DEFAULT_DELIMITER": {
+    "name": "Разделитель",
+    "value": ";",
+    "description": "Разделить колонок в файлах"
+  },
+  "DEFAULT_ENCODE": {
+    "name": "Кодировка",
+    "value": "win1251",
+    "description": "Кодировка выходных файлов"
+  },
+  "DEFAULT_OUT_PATH": {
+    "name": "Папка выхода",
+    "value": "out/",
+    "description": "Папка, куда будет записываться результат"
+  },
+  "DEFAULT_TYPE_OUT_FILES": {
+    "name": "Формат файлов",
+    "value": "csv",
+    "description": "Формат файлов"
+  },
+  "PRODUCTS_PER_PAGE_MAX": {
+    "name": "Товаров на странице",
+    "value": 100,
+    "description": "Максимум товаров на 1 странице"
+  },
+  "PRODUCT_ITERATION_DELAY": {
+    "name": "Задержка",
+    "value": 3,
+    "description": "Задержка между товарами"
+  },
+  "MAX_DELAY": {
+    "name": "Максимальная задержка",
+    "value": 20,
+    "description": "Максимальная задержка между товарами"
+  },
+  "DELAY_UPPER": {
+    "name": "Увеличение задержки",
+    "value": 2,
+    "description": "Увеличение задержки на кол-во секунд в случае ошибки товара"
+  },
+  "PAGE_TIMEOUT": {
+    "name": "Таймаут страницы",
+    "value": 45,
+    "description": "Максимальное время ожидание страницы"
+  },
+  "SORTING_TYPES": {
+    "name": "Типы сортировок",
+    "value": [
+      "newly",
+      "rate",
+      "priceup",
+      "pricedown",
+      "sale",
+      "popular"
+    ],
+    "description": "Доступные типы сортировок у вб"
+  },
+  "DEFAULT_LOGS_PATH": {
+    "name": "Папка логов",
+    "value": "logs/",
+    "description": "Путь от корня проекта, где будут храниться логи"
+  }
 }

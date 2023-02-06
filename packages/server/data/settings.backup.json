@@ -1,7 +1,32 @@
 {
-	"url": "https://www.wildberries.ru/brands/goorin-brothers",
-	"sorting": "newly",
-	"initialIterationPage": null,
-	"productsCountPerPage": null,
-	"pagesHandlingCount": null
+  "url": {
+    "name": "Ссылка",
+    "value": "https://www.wildberries.ru/brands/goorin-brothers",
+    "description": "Ссылка на страницу с товарами"
+  },
+  "sorting": {
+    "name": "Сортировка",
+    "value": "newly",
+    "description": "Тип сортировки товаров на странице"
+  },
+  "initialIterationPage": {
+    "name": "Начальная страница",
+    "value": "",
+    "description": "Номер с какой страницы начать"
+  },
+  "productsCountPerPage": {
+    "name": "Кол-во товаров",
+    "value": "",
+    "description": "Сколько товаров парсить на каждой странице"
+  },
+  "pagesHandlingCount": {
+    "name": "Кол-во страниц",
+    "value": "",
+    "description": "Сколько страниц обработать отсчитывая с начальной"
+  },
+  "includePrevProducts": {
+    "name": "Предыдущие товары",
+    "value": 0,
+    "description": "Учитывать ли предыдущие товары из папки с уже спаршенных товаров. 0 - нет, 1 - да."
+  }
 }

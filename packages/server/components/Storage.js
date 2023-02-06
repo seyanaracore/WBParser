@@ -14,7 +14,7 @@ export default class Storage {
   }
 
   async read(path = this.dbFilePath) {
-    if (!path) throw Error('invalid path', path)
+    if (!path) throw Error('invalid path: ' + path)
     const fileData = await this.#readAndParseFile(path)
 
     if (typeof fileData !== 'object')
@@ -34,7 +34,6 @@ export default class Storage {
   async restore() {
     const fileData = await this.read(this.backupPath)
 
-    console.log(fileData)
     return this.write(fileData)
   }
 

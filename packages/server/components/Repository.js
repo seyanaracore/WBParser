@@ -1,10 +1,11 @@
 import * as feathersjs from '@feathersjs/errors'
 
-export default class Respository {
-	storage = null
+export default class Repository {
+  storage = null
+
   constructor(storage) {
-		this.storage = storage
-	}
+    this.storage = storage
+  }
 
   async get() {
     return this.storage.data
@@ -15,10 +16,9 @@ export default class Respository {
   }
 
   async set(config) {
-    if (typeof config !== 'object') {
-      throw new feathersjs.BadRequest(`awaiting config object`)
-    }
-    const configObject = {...this.storage.data,...config}
+    if (typeof config !== 'object') throw new feathersjs.BadRequest(`awaiting config object`)
+
+    const configObject = { ...this.storage.data, ...config }
 
     this.storage.data = configObject
 
