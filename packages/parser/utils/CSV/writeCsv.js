@@ -4,18 +4,13 @@ import * as nPath from 'path'
 import { createObjectCsvStringifier } from 'csv-writer'
 import { DEFAULT_DELIMITER, DEFAULT_ENCODE } from '../constants.js'
 import { validateCSVHeaders } from '../validators.js'
+import checkFolder from '../checkFolder.js'
 
 const getDir = path =>
   path
     .split(nPath.sep)
     .slice(0, path.split(nPath.sep).length - 1)
     .join(nPath.sep)
-
-const checkFolder = dir => {
-  if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir, { recursive: true })
-  }
-}
 
 class writeCSVStream {
   filePath = ''
