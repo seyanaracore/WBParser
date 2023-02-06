@@ -3,7 +3,8 @@
   "scripts": {
     "build": "lerna run build --scope=frontend",
     "server": "lerna run start --scope=server",
-    "serve": "lerna run serve --scope=frontend"
+    "watch:frontend": "lerna run watch --scope=frontend",
+    "watch:server": "lerna run watch --scope=server"
   },
   "devDependencies": {
     "lerna": "^6.4.1",
