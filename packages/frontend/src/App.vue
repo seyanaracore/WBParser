@@ -1,9 +1,10 @@
 <template>
   <div id="app">
-    <b-nav tabs small>
-      <b-nav-item :active="page" @click="page=true">Main</b-nav-item>
-      <b-nav-item :active="!page" @click="page=false">Settings</b-nav-item>
-    </b-nav>
+    <nav class="nav small nav-tabs">
+      <a class="nav-link" :class="{active: page}" href="#" @click="page=true">Main</a>
+      <a class="nav-link" :class="{active: !page}" href="#" @click="page=false">Settings</a>
+    </nav>
+
     <main>
       <KeepAlive>
         <MainPage v-if="page"/>
