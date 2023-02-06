@@ -1,5 +1,9 @@
 {
-  "dependencies": {},
+  "author": "seyanaracore",
+  "homepage": "https://github.com/seyanaracore/WBParser",
+  "bugs": {
+    "email": "seyanaracore@icloud.com"
+  },
   "scripts": {
     "build": "lerna run build --scope=frontend",
     "server": "lerna run start --scope=server",
@@ -7,8 +11,8 @@
     "watch:server": "lerna run watch --scope=server"
   },
   "devDependencies": {
-    "lerna": "^6.4.1",
-    "prettier": "^2.8.3"
+    "lerna": "6.4.1",
+    "prettier": "2.8.3"
   },
   "private": "true",
   "workspaces": [
