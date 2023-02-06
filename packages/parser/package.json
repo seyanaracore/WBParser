@@ -1,0 +1,25 @@
+{
+  "name": "parser",
+  "dependencies": {
+    "@feathersjs/express": "4.5.15",
+    "@feathersjs/feathers": "4.5.15",
+    "@feathersjs/transport-commons": "4.5.15",
+    "chalk": "5.0.1",
+    "csv-parser": "3.0.0",
+    "csv-writer": "1.6.0",
+    "iconv-lite": "0.6.3",
+    "puppeteer": "19.6.3",
+    "socket.io": "4.5.4",
+    "user-agents": "1.0.837"
+  },
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node index.js",
+    "watch": "nodemon index.js --watch"
+  },
+  "devDependencies": {
+    "@feathersjs/errors": "4.5.15",
+    "prettier": "2.8.3"
+  }
+}
