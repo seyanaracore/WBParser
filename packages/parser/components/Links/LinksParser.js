@@ -1,5 +1,5 @@
 import UserAgent from 'user-agents'
-import { PAGE_TIMEOUT, PRODUCT_ITERATION_DELAY } from '../../utils/constants.js'
+import {PAGE_TIMEOUT, PRODUCT_ITERATION_DELAY} from '../../utils/constants.js'
 
 const newPage = async (url, browser, delay = PRODUCT_ITERATION_DELAY) => {
   if (!url || typeof url !== 'string') throw Error('Url was expected as a string')
@@ -10,7 +10,7 @@ const newPage = async (url, browser, delay = PRODUCT_ITERATION_DELAY) => {
   await page.setUserAgent(UserAgent.toString())
   await page.setDefaultTimeout(PAGE_TIMEOUT * 1000)
   await page.waitForTimeout(delay * 1000)
-  await page.goto(url, { waitUntil: 'networkidle2' })
+  await page.goto(url, {waitUntil: 'networkidle2'})
 
   return page
 }
@@ -30,9 +30,9 @@ async function parseProductsLinks(url, browser) {
         let actualScroll = 1
         let maxScroll = 0
         while (actualScroll !== maxScroll) {
-          await sleep(0.5)
+          await sleep(0.8)
           actualScroll = element.scrollTop
-          element.scrollTop += 9999
+          element.scrollTop += 500
           maxScroll = element.scrollTop
         }
         element.scrollTop -= offset
@@ -41,7 +41,7 @@ async function parseProductsLinks(url, browser) {
     }
 
     await toBottomElement()
-    const goods = document.querySelectorAll('.product-card-list > div.product-card')
+    const goods = document.querySelectorAll('.product-card-list div.product-card__wrapper')
     const links = []
     const errorBlock =
       document.querySelector('#divGoodsNotFoundBackMain') ||
@@ -53,7 +53,7 @@ async function parseProductsLinks(url, browser) {
     }
 
     for (let good of goods) {
-      const link = good?.childNodes[1]?.childNodes[1]?.href
+      const link = good?.children[0].href
       links.push(link)
     }
     return links

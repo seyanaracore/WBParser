@@ -1,5 +1,5 @@
 import Puppeteer from 'puppeteer'
-import { errorNotify, successNotify } from '../../utils/consoleNotify.js'
+import {errorNotify, successNotify} from '../../utils/consoleNotify.js'
 import {
   DELAY_UPPER,
   MAX_DELAY,
@@ -11,7 +11,7 @@ import linksParser from './LinksParser.js'
 
 const pageNotInRange = (pageNum, settings) => {
   const initPage = settings.initialIterationPage || 1
-  const { pagesHandlingCount, productsCountPerPage } = settings
+  const {pagesHandlingCount, productsCountPerPage} = settings
 
   return (
     (pagesHandlingCount && pageNum === pagesHandlingCount + initPage) ||
@@ -26,7 +26,7 @@ async function getProductsLinksList(dataHandler, settings = {}) {
     headless: true,
     defaultViewport: null,
   })
-  settings = { ...defaultSettings, ...settings }
+  settings = {...defaultSettings, ...settings}
 
   let delay = PRODUCT_ITERATION_DELAY
 
@@ -61,7 +61,7 @@ async function getProductsLinksList(dataHandler, settings = {}) {
     } else {
       successNotify(pageUrl, 'page:', i, 'products:', linksList.length)
 
-      dataHandler(linksList.map(el => ({ url: el })))
+      dataHandler(linksList.map(el => ({url: el})))
       pagesProductsLinks.push(...linksList)
       delay = PRODUCT_ITERATION_DELAY
     }
@@ -77,7 +77,7 @@ async function getProductsLinksList(dataHandler, settings = {}) {
 
   successNotify('Products list count:', productsLinks.length)
 
-  return { productsLinks, rejectedLinks }
+  return {productsLinks, rejectedLinks}
 }
 
 export default getProductsLinksList
